@@ -1,6 +1,13 @@
 import envCi from "env-ci";
+
 import getLogger from "../utils/getLogger.js";
 import getConfig from "../utils/getConfig.js";
+import verify from "../utils/verify.js";
+
+async function run(context) {
+  // Verify config
+  await verify(context);
+}
 
 export default async (
   cliOptions = {},
@@ -16,4 +23,6 @@ export default async (
   context.logger = getLogger(context);
   const { options } = await getConfig(context, cliOptions);
   context.options = options;
+
+  await run(context);
 };

@@ -6,7 +6,7 @@ export const FIRSTPRERELEASE = "1";
 
 export const COMMIT_NAME = "upverse-bot";
 
-export const COMMIT_EMAIL = "upverse-bot@zykapp.com";
+export const COMMIT_EMAIL = "upverse-bot@upverse.com";
 
 export const RELEASE_NOTES_SEPARATOR = "\n\n";
 

@@ -1,16 +1,18 @@
-import { castArray, isNil, pickBy } from "lodash-es";
+import { castArray, isNil, pickBy, isEmpty } from "lodash-es";
 import { cosmiconfig } from "cosmiconfig";
 
+import { getRepoUrl } from "./git.js";
+
 import getLogger from "./getLogger.js";
+
 const debug = getLogger({ scope: "upverse:config" }).info;
 
 const CONFIG_NAME = "upverse";
-const CONFIG_FOLDER = "config";
 
 export default async (context, cliOptions) => {
-  let { cwd } = context;
+  const { cwd } = context;
   const { config, filepath } =
-    (await cosmiconfig(CONFIG_NAME).search(`${cwd}/${CONFIG_FOLDER}`)) || {};
+    (await cosmiconfig(CONFIG_NAME).search(cwd)) || {};
   debug("load config from: %s", filepath);
 
   // Merge config file options and CLI/API options
@@ -26,6 +28,7 @@ export default async (context, cliOptions) => {
       { name: "alpha", prerelease: true },
     ],
     tagFormat: `v\${version}`,
+    repositoryUrl: await getRepoUrl({ cwd }),
     // Remove `null` and `undefined` options, so they can be replaced with default ones
     ...pickBy(options, (option) => !isNil(option)),
     ...(options.branches ? { branches: castArray(options.branches) } : {}),
@@ -33,6 +36,7 @@ export default async (context, cliOptions) => {
   if (options.ci === false) {
     options.noCi = true;
   }
+
   debug("options values: %O", options);
   return { options };
 };
